@@ -1,0 +1,1 @@
+Helpful notes/tips/cheat-sheets for programing in Python as well as general machine learning concepts 
