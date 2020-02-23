@@ -1,0 +1,165 @@
+
+Problem Statement: Given a smaller strings and a bigger string b, design an algorithm to find all permuta­
+tions of the shorter string within the longer one. Print the location of each permutation.
+
+
+hash = # count of chars in short
+hash_copy = copy.deepcopy(hash)
+short_len = short.length ---> Syntax Err! should be len(short)
+long_len = long.length   ---> Syntax Err! should be len(long)
+
+start = 0
+list_loc=[]
+
+def checkhash():
+     # check if each value in hash_copy is exactly zero
+
+def revise_hash_copy(start):
+       ch = long(start) ---> Syntax Err! should be long[start]
+       if hash[ch] > 0:
+          hash_copy[ch]+=1
+
+for itr in range(short.length):
+     if hash[long[itr]] > 0:
+        hash_copy[long[itr]]-=1
+
+chk = checkhash()
+
+if chk == True:
+   list_loc.append(start)
+
+
+
+for itr2 in range(short_len, long_len):
+     revise_hash_copy(start)
+     start = itr2-short_len+1 
+     if hash[long[itr2]] > 0:
+       hash_copy[long[itr2]]-=1
+    chk = checkhash()
+    if chk == True:
+      list_loc.append(start)
+
+time complexity: O(kl), l = length of long string, k = number of alphabets (the factor of k comes from repeated calls to checkhash())
+================================================= DRY RUN ===============================================================
+
+e.g.
+long = ffaafhtdffgtfbc
+short = ftg
+
+
+1) hash = {f:1, t:1, g:1, all others zero}
+2) hash_copy = {f:1, t:1, g:1}
+3) short_len = 3
+4) long_len = 15
+5) start = 0; list_loc = []
+6) for itr in range(3) # range(3) = [0,1,2]
+   [ 7) itr = 0
+     8) hash[long[itr]] > 0? = hash[long[0]]> 0? = hash[f] > 0?= True
+     [  9) hash_copy = {f:0, t:1, g:1, all others zero} ]
+     10) itr = 1
+     11) hash[long[itr]] > 0? = hash[long[1]] > 0? = hash[f] > 0? = True
+     [ 12) hash_copy = {f:-1, t:1, g:1, all others zero} ]
+     13) itr = 2
+     14) hash[long[itr]] > 0? = hash[long[2]]>0? = hash[a]? = False => do nothing ]
+
+15) chk = checkhash() = False
+16) chk == True? = False => do nothing
+17) for it2 in range(3,22) # range(3,22) = [3,4,5,..., 12,13,14]
+    [ 18) itr2 = 3
+      19) revise_hash_copy(0)
+      [ 20) ch = long[0] = f
+        21) hash[f]>0? = True
+        [ 22) hash_copy = {f:0, t:1, g:1, all others zero} ] ]
+      23) start = 3-3+1 = 1
+      24) hash[long[3]] > 0? = hash[a]> 0? = False => do nothing
+      25) chk = checkhash() = False
+      26) chk == True? = False => do nothing
+      27) itr2 = 4
+      28) revise_hash_copy(1)
+      [ 29) ch = long[1] = f
+        30) hash[f]> 0? = True
+        [ 31) hash_copy={f:1, t:1,g:1, all others zero} ] ]
+      32) start = 4 -3 +1 = 2
+      33) hash[long[4]] > 0? = hash[f] > 0? = True
+      [ 34) hash_copy = {f:0, t:1, g:1, all others zero} ]
+      35) chk = checkhash() = False
+      36) chk == True? = False => do nothing
+      38) itr2 = 5
+      39) revise_hash_copy(2)
+      [ 40) ch = long[2] = a
+        41) hash[a] >  0? = False => do nothing  ]
+      42) start = 5-3+1 = 3
+      44) hash[long[5]] > 0? = hash[h] > 0? = False => do nothing # hash_copy = {f:0, t:1, g:1, all others zero}
+      45) chk = checkhash() = False
+      46) chk == True? False => do nothing
+      47) itr2 = 6
+      48) revise_hash_copy(3)
+      [ 49) ch = long[3] = a
+        50) if hash[a] > 0? = False => do nothing ]
+      51) start = 6-3+1 = 4
+      52) hash[long[6]] > 0? = hash[long[t]] > 0? = True
+      [ 53) hash_copy = {f:0, t:0, g:1, all others zero} ]
+      54) chk = checkhash() = False
+      55) chk == True? = False => do nothing
+      56) itr2 = 7
+      57) revise_hash_copy(4) = revise_hash_copy(f) => hash_copy = {f:1, t:0, g:1, all others zero}
+      58) start = 7 -3 + 1 = 5
+      59) hash[long[7]] > 0? = hash[d] > 0? = False => do nothing # hash_copy = {f:1, t:0, g:1, all others zero} 
+      60) chk = checkhash() = False
+      61) chk == True? = False => do nothing
+      62) itr2 = 8
+      63) revise_hash_copy(5) = revise_hash_copy(h) => hash_copy = {f:1, t:0, g:1, all others zero}
+      64) start = 8-3+1 = 6
+      65) hash[long[8]] > 0? = hash[f] > 0? = True
+      [ 66) hash_copy = {f:0, t:0, g:1, all others zero} ]
+      67) chk = checkhash() = False
+      68) chk == True? = False => do nothing
+      69) itr2 = 9
+      70) revise_hash_copy(6) = revise_hash_copy(t) => hash_copy = {f:0, t:1, g:1, all others zero}
+      71) start = 9 -3+1 = 7
+      72) hash[long[9]] > 0? = hash[f] > 0? = True
+      [ 73) hash_copy = {f: -1, t:1, g:1, all others zero} ]
+      74) chk = checkhash() = False
+      75) chk == True? = False => do nothing
+      76) itr2 = 10
+      77) revise_hash_copy(7) = revise_hash_copy(d) => hash_copy = {f: -1, t:1, g:1, all others zero}
+      78) start = 10 - 3 + 1 = 8
+      79) hash[long[10]] > 0 ? = hash[g] > 0? = True
+      [ 80) hash_copy = {f: -1, t:1, g:0, all others zero} ]
+      81) chk = checkhash() = False
+      82) chk == True? = False => do nothing
+      83) itr2 = 11
+      84) revise_hash_copy(8) = revise_hash_copy(f) => hash_copy = {f:0, t:1, g:0, all others zero}
+      85) start = 11 - 3 + 1 = 9
+      86) hash[long[11]] > 0? = hash[t] > 0? = True
+      [ 87) hash_copy = {f:0, t:0, g:0, all others zero} ]
+      88) chk = checkhash() = True
+      89) chk == True? True => list_loc = [9]
+      90) itr2 = 12
+      91) revise_hash_copy(9) = revise_hash_copy(f) => hash_copy = {f:1, t:0, g:0, all others zero}
+      92) start = 12-3+1 = 10
+      93) hash[long[12]] > 0? = hash[f] > 0? = True
+      [ 94) hash_copy = {f:0, t:0, g:0, all others zero} ]
+      95) chk = checkhash() = True
+      96) chk == True? = True => list_loc = [9, 10]
+      97) itr2 = 13 
+      98) revise_hash_copy(10) => revise_hash_copy(g) => hash_copy = {f:0, t:0, g:1, all others zero}
+      99) start = 13 - 3 + 1 = 11
+      100) hash[long[13]] > 0? hash[b] > 0? = False => do nothing
+      101) chk = checkhash() = False
+      102) chk == True? = False => do nothing
+      103) itr2 = 14
+      104) revise_hash_copy(11) => revise_hash_copy(t) => hash_copy = {f:0, t:1, g:1, all others zero}
+      105) start = 14 - 3 + 1 = 12
+      106) hash[long[14]] > 0? = hash[c] > 0? = False => do nothing
+      107) chk = checkhash() = False => do nothing ]
+      
+     
+
+Result: list_loc = [9,10]
+   
+
+
+
+ 
+
