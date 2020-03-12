@@ -1,0 +1,125 @@
+Problem 1.5 from Cracking the Coding Interview:
+
+One Away: There are three types of edits that can be performed on strings: insert a character, remove a character, or replace a character. Given two strings, write a function to check if they are one edit (or zero edits) away. 
+
+EXAMPLE
+pale, ple -> true 
+pales, pale -> true 
+pale, bale -> true
+pale, bake -> false
+
+Solution: 
+
+Assumption: we will consider whitespaces as characters
+
+First of all let's notice that since we are looking for strings which are at most one edit away from each other, thus the difference in the lengths of the two strings should be either 0 or 1. All other cases necessarily imply that the two strings are more than one edit away from each other. 
+
+I) Furthermore, if the two strings are of equal lengths, then for them to be at most one edit away from each other, they must have atmost one character that is different. To check this we start with a flag 'found_diff_char = False' and run a loop of l iterations, l being the length of the two strings. In the i-th iteration we compare the character at the i-th position in the two strings. If the two characters match, we simply continue to the next iteration. If the characters are different AND found_diff_char == False, then we set found_diff_char = True and continue to the next iteration. On the otherhand, if the characters are different AND found_diff_char == True, then this marks the occurance of a second replacement and hence the strings can not be merely one edit away from each other. We there stop any further iterations and return False as our answer. If the loop comes to an end, then it must have encountered one or less replacements and hence we return True as our answer. This is implemented in the following routine. 
+
+
+# function to check if two strings of equal length are at most one replacement away
+def OneReplacementQ(s1, s2):
+    l = len(s1)
+    if len(s2)!=l:
+       print('Error: The s1 and s2 are not of same length')
+       return 
+    found_diff_char = False
+    for idx in range(l):
+       if s1[idx] == s2[idx]:
+          continue
+    
+       if (s1[idx]!= s2[idx]) and found_diff_char:  # Note that we will only reach here when the previous if statment 
+                                                    # returns a false, 
+                                                    # so this if statement can be simply replaced with elif found_diff_char:
+          return False
+       elif:
+          found_diff_char = True
+    return True   
+  
+
+
+II) Similarly, if their lengths differ by 1, then the bigger string must be obtainable from the smaller string by a single insertion. To check this we start with a flag 'inserted_char = False' and run a loop for l_big iterations, where l_big is the length of the smaller of the two strings. The loop iterator gives us our position in the bigger string. We also keep a 'small_idx' variable that keeps track of our position in smaller string. In the i-th iteration, we compare the respective characters in the two strings. If the characters are same, we increase small_idx by 1 and move to the next iteration. But, if the characters are different AND inserted_char == False, then we assume that this is due to a missing character in the smaller string. We set inserted_char = True but do NOT increase small_idx. On the otherhand, If the characters are different and inserted_char == True, then this is a second miamatch between the strings and hence the two strings cannot not be a mere single edit away from each other. We can therefore immediately return False at this point. If the loop finishes successfully, then the two strings must be only a single insertion away from each other and therefore we return True. An important thing here the case when the bigger string is obtained from the smaller string by inserting a character at the end e.g. pale vs pales. Now in its last iteration the loop will look for the non-existant character in the smaller string and therefore throw an error. An erroneous of correcting this would be to only run the loop for the length of the smaller string. But in this case we will never be checking for the validity of the last character in the bigger string and hence it will fail in cases such as pale vs pls. The correct way to handle this is to run the loop for the length of the bigger loop and inside the loop check if small_idx == l_small (assumming 0-indexed arrays). This will only be true for strings which differ from each other by an insertion at the end, hence if this check is correct, we simply return True.
+
+This is implemented in the following routine:
+
+# function to check of two strings are equivalent upto a single insertion in the smaller string
+# When calling this function we will make sure that s1 is the smaller string and s2 is the bigger string
+def OneInsertionQ(s1, s2):
+    l1 = len(s1)
+    l2 = len(s2)
+    if l1 > l2:
+       print('Error: s1 should be smaller then s2')
+    if (l2-l1)!=1:
+       print('Error: the strings cannot be related by just a single insertion in the smaller string')
+       return
+    idx1 = 0
+    inserted_char = False
+    for idx2 in range(l2): 
+       if idx1 == l1:
+          return True
+       if s1[idx1] == s2[idx2]:
+          idx1+=1
+          continue
+       elif inserted_char:
+          return False
+       else:
+          inserted_char = True  
+    return True
+
+
+In the main body of the code we will do the following:
+
+
+s1 = input('input the first string')
+s2 = input('input the second string')
+
+l1 = len(s1)
+l2 = len(s2)
+
+if abs(l1-l2) > 1:
+   print(False)
+elif l1 == l2:
+   print(OneReplacementQ(s1,s2))
+elif l2-l1 == 1:
+   print(OneInsertionQ(s1,s2))
+else:
+   print(OneInsertionQ(s2,s1))
+     
+ 
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  

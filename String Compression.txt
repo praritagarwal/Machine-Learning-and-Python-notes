@@ -1,0 +1,55 @@
+Exercise 1.6 from Cracking the Coding Interview:
+
+Implement a method to perform basic string compression using the counts of repeated characters. For example, the string aabcccccaaa would become a2blc5a3. If the "compressed" string would not become smaller than the original string, your method should return the original string. You can assume the string has only uppercase and lowercase letters (a - z).
+
+Solution:
+
+We keep a variable 'compressed_string' to store the compressed string. We also keep a variable 'current_char' which is for keeping track of the character whose repetitions are being counted. Of course, we also keep a 'counter' which counts the repetitions encountered so far of current_char. We initiate current_char to be the first char in the string and initiate count = 1. We now loop through the string starting from its 2nd character. If the character at the current position in the string is same as current_char then we increament counter by 1 and move to the next iteration. If the character in the current position is now same as current_char, then we append current_char + str(counter) to compressed_string, then we reset current_char to be the character in the current position of the string and reset count = 1. When the loop finishes, compressed_char will contain all the compressions so far so far except for the compression corresponding to the last character in the string. So once the loop finishes, we must append current_char + str(counter) one last time. This will give us the compressed string except in the case where the string cannot be compressed which is when no two adjacent characters are the same. In this case we want to return the string itself. There are two ways to taking care of this
+
+A) keep a flag 'compressed' = False from start. Flip this flag to be True if count > 1 at any point. In the end, if 'compressed' == False, return the original string. Note that the underlying assumption in this code is that if there are consecutive repeated characters in the string, then the compressed string is going to be smaller than the original string. This assumption fails for e.g. when the original string is 'aab', the compressed string will then be 'a2b1' which is actually longer than the original string and hence not a compression of the original string. 
+
+The corresponding code is as follows:
+
+
+def compress(s):
+    compressed_string = ''
+    current_char = s[0]
+    count = 1
+    compressed = False
+    for idx in range(2, len(s)):
+        if s[idx] == current_char:
+           count+=1
+           compressed = True
+        else:
+           compressed_string.append(current_char + str(count))
+           current_char = s[idx]
+           count = 1
+     
+    compressed_string.append(current_char + str(count))
+    if compressed:
+       return s
+    return compressed_string
+
+
+B) A simpler way to do this is rather than having a flag, simply compare the lengths of the compressed_string and the original string and return the one with smaller length. Obviously if no compression was possible then compressed string will be longer than the original string due to the insertion of 1's after each character in the original string. 
+
+The corresponding code is:
+
+def compress(s):
+    compressed_string = ''
+    current_char = s[0]
+    count = 1
+    for idx in range(2, len(s)):
+        if s[idx] == current_char:
+           count+=1
+        else:
+           compressed_string.append(current_char + str(count))
+           current_char = s[idx]
+           count = 1
+     
+    compressed_string.append(current_char + str(count))
+    if len(compressed_string) <  len(s):
+       return compressed_string
+    return s
+
+ 
