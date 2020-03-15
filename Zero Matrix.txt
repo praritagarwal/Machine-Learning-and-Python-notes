@@ -1,0 +1,66 @@
+Exercize 1.9 from Cracking the Coding Interview:
+
+Write an algorithm such that if an element in an MxN matrix is 0, its entire row and column are set to 0.
+
+
+Solution 1:
+
+
+zero_rows = set([])
+zero_columns = set([])
+for row in range(M):
+    for column in range(N):
+        if a[row, column] == 0:
+           zero_rows.append(row) -> # There is no append method for sets. 
+                                    # Add elements using the add() method.
+           zero_columns.append(column)
+           break ---> # breaking will result in a wrong output 
+                      # because there might be another zero-element in this row
+                      # This algo. will therefore not set the column of subsequent zero elements to zero
+                      # To fix it, remove break.
+
+for row in zero_rows:
+     for column in range(N):
+         a[row, column] = 0
+
+
+for column in zero_columns:
+    for row in range(M):
+        a[row, column] = 0    
+
+This is O(MN) in time which is same as BCR.
+
+Note that this is O(M+N) in space as it uses extra storage: zero_rows and zero_columns
+
+Let's make it O(1) in space.
+
+Solution2:   Observe that instead of using zero_rows and zero_columns as sets of rows and columns to make zero, we can simply set the 1st element in the corresponding row/column to zero. The we scan over all the rows, making those zero whose 1st element is zero. Similarly, we also scan over columns and make them zero if their first entry is zero. The only caveat here is when there are zero elements in the first row but not in the first column and vice-versa. In both these cases, we will set a[0,0] = 0 which will then cause both the first row as well as the first column to become zero hence giving wrong output. To avoid this we will keep two flags to indicate if the zeroth_row or the zeroth_column should be made zero or not and make them zero only when the corresponding flag is true. This is implemented as follows:
+
+zeroth_row = False
+zeroth_column = False
+for row in range(M):
+    for column in range(N):
+        if a[row, column] == 0:
+           a[row, 0] = 0 # make the first element of the row zero
+           a[0, column] = 0 # make the first element of the column zero
+           zeroth_row = (row == 0)
+           zeroth_column == (column == 0)
+
+if zeroth_row:
+   for column in range(N):
+       a[0, column] = 0
+
+for row in range(1, M):
+    if a[row, 0] == 0:
+       for column in range(N):
+           a[row, column] = 0
+
+
+if zeroth_column:
+   for row in range(M):
+       a[row, 0] = 0
+
+for column in range(1, N):
+    if a[0, column] == 0:
+       for row in range(M):
+           a[row, column] = 0  
